@@ -1,0 +1,12 @@
+﻿{
+    "ID":"095A6AE3A254432EBBD78F05A71D4666",
+    "ActionKeyword":"yd",
+    "Name":"有道翻译私Key版",
+    "Description":"有道中英互译",
+    "Author":"qianlifeng, happlebao, pengzhxyz",
+    "Version":"2.1.2",
+    "Language":"csharp",
+    "Website":"https://github.com/pengzhxyz/Wox.Plugin.Youdao",
+    "ExecuteFileName":"Wox.Plugin.Youdao.dll",
+	"IcoPath":"Images\\youdao.ico"
+}
