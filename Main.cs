@@ -79,8 +79,7 @@ namespace Wox.Plugin.Youdao
             TranslateResult o = JsonConvert.DeserializeObject<TranslateResult>(json);
             if (o.errorCode == 0)
             {
-
-                if(o.translation != null)
+                if (o.translation != null)
                 {
                     var translation = string.Join(", ", o.translation.ToArray());
                     var title = translation;
@@ -97,7 +96,7 @@ namespace Wox.Plugin.Youdao
                     });
                 }
 
-                if(o.basic?.explains != null)
+                if (o.basic?.explains != null)
                 {
                     var explantion = string.Join(",", o.basic.explains.ToArray());
                     results.Add(new Result
@@ -117,7 +116,7 @@ namespace Wox.Plugin.Youdao
                         results.Add(new Result
                         {
                             Title = translation,
-                            SubTitle = "网络释义："+ t.key,
+                            SubTitle = "网络释义：" + t.key,
                             IcoPath = ico,
                             Action = this.copyToClipboardFunc(translation)
                         });
@@ -129,22 +128,18 @@ namespace Wox.Plugin.Youdao
                 string error = string.Empty;
                 switch (o.errorCode)
                 {
-                    //case 20:
-                    //    error = "要翻译的文本过长";
-                    //    break;
-
-                    //case 30:
-                    //    error = "无法进行有效的翻译";
-                    //    break;
-
-                    //case 40:
-                    //    error = "不支持的语言类型";
-                    //    break;
-
-                    //case 50:
-                    //    error = "无效的key";
-                    //    break;
-
+                    case 20:
+                        error = "要翻译的文本过长";
+                        break;
+                    case 30:
+                        error = "无法进行有效的翻译";
+                        break;
+                    case 40:
+                        error = "不支持的语言类型";
+                        break;
+                    case 50:
+                        error = "无效的key";
+                        break;
                     case 101:
                         error = "缺少必填的参数，出现这个情况还可能是et的值和实际加密方式不对应";
                         break;
@@ -199,6 +194,9 @@ namespace Wox.Plugin.Youdao
                     case 401:
                         error = "账户已经欠费停";
                         break;
+                    default:
+                        error = "未知错误, errorCode = " + o.errorCode;
+                        break;
                 }
 
                 results.Add(new Result
@@ -234,11 +232,9 @@ namespace Wox.Plugin.Youdao
 
         private string CalculateMD5Hash(string input)
         {
-            // step 1, calculate MD5 hash from input
             MD5 md5 = System.Security.Cryptography.MD5.Create();
             byte[] inputBytes = System.Text.Encoding.UTF8.GetBytes(input);
             byte[] hash = md5.ComputeHash(inputBytes);
-            // step 2, convert byte array to hex string
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < hash.Length; i++)
             {
@@ -252,7 +248,8 @@ namespace Wox.Plugin.Youdao
             try
             {
                 Clipboard.SetText(text);
-            }catch(System.Exception e)
+            }
+            catch (System.Exception)
             {
                 return false;
             }
