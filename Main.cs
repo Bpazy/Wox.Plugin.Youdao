@@ -6,6 +6,8 @@ using Newtonsoft.Json;
 using Wox.Infrastructure.Http;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Wox.Plugin.Youdao
 {
@@ -44,6 +46,20 @@ namespace Wox.Plugin.Youdao
             _settings = _viewModel.Settings;
         }
 
+        public Action<T> Debounce<T>(this Action<T> func, int milliseconds = 300)
+        {
+            var last = 0;
+            return arg =>
+            {
+                var current = Interlocked.Increment(ref last);
+                Task.Delay(milliseconds).ContinueWith(task =>
+                {
+                    if (current == last) func(arg);
+                    task.Dispose();
+                });
+            };
+        }
+
         public List<Result> Query(Query query)
         {
             List<Result> results = new List<Result>();
@@ -75,6 +91,7 @@ namespace Wox.Plugin.Youdao
             string salt = "6";
             string sign = CalculateMD5Hash(appKey + q + salt + _settings.SecretKey);
             string url = $"{youdaoApiUrl}?q={q}&from={from}&to={to}&appKey={appKey}&salt={salt}&sign={sign}";
+
             var json = Http.Get(url).Result;
             TranslateResult o = JsonConvert.DeserializeObject<TranslateResult>(json);
             if (o.errorCode == 0)
